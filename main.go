@@ -27,7 +27,7 @@ var (
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: %s -o output [flags] image ...\n", progName)
+	fmt.Fprintf(os.Stderr, "usage: %s [flags] -o output image ...\n", progName)
 	flag.PrintDefaults()
 	os.Exit(2)
 }

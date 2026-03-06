@@ -11,7 +11,7 @@ go install github.com/CatsDeservePets/vergif@latest
 ## Usage
 
 ```
-usage: vergif -o output [flags] image ...
+usage: vergif [flags] -o output image ...
   -delay uint
         delay per frame in 1/100 of a second (default 80)
   -loop int
