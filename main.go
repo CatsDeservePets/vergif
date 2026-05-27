@@ -74,7 +74,7 @@ func main() {
 		anim.Delay = append(anim.Delay, int(*delay))
 	}
 
-	f, err := os.OpenFile(*outPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o644)
+	f, err := os.Create(*outPath)
 	if err != nil {
 		log.Fatal(err)
 	}
