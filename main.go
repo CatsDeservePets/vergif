@@ -58,7 +58,7 @@ func main() {
 		img, _, err := image.Decode(f)
 		f.Close()
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("%s: %v", path, err)
 		}
 
 		var frame *image.Paletted
