@@ -11,8 +11,6 @@ import (
 	_ "image/png"
 	"log"
 	"os"
-	"path/filepath"
-	"strings"
 
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
@@ -20,21 +18,20 @@ import (
 )
 
 var (
-	progName  = strings.TrimSuffix(filepath.Base(os.Args[0]), ".exe")
 	delay     = flag.Uint("delay", 80, "delay per frame in 1/100 of a second")
 	loopCount = flag.Int("loop", 0, "animation loop count; 0 means forever, -1 means no looping (default 0)")
 	outPath   = flag.String("o", "", "`output` file")
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: %s [flags] -o output image ...\n", progName)
+	fmt.Fprintln(os.Stderr, "usage: vergif [flags] -o output image ...")
 	flag.PrintDefaults()
 	os.Exit(2)
 }
 
 func main() {
 	log.SetFlags(0)
-	log.SetPrefix(progName + ": ")
+	log.SetPrefix("vergif: ")
 	flag.Usage = usage
 	flag.Parse()
 
