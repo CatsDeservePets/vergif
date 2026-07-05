@@ -13,11 +13,13 @@ go install github.com/CatsDeservePets/vergif@latest
 ```
 usage: vergif [flags] -o output image ...
   -delay uint
-        delay per frame in 1/100 of a second (default 80)
+    	delay per frame in 1/100 of a second (default 80)
   -loop int
-        animation loop count; 0 means forever, -1 means no looping (default 0)
+    	animation loop count; 0 means forever, -1 means no looping (default 0)
   -o output
-        output file
+    	output file
+  -palette value
+    	palette for truecolour quantisation; must be plan9 or websafe (default plan9)
 ```
 
 ## Example

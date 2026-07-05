@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"image"
+	"image/color"
 	"image/color/palette"
 	"image/draw"
 	"image/gif"
@@ -11,16 +13,61 @@ import (
 	_ "image/png"
 	"log"
 	"os"
+	"strings"
 
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
 )
 
+type paletteKind byte
+
+const (
+	unknown paletteKind = iota
+	plan9
+	webSafe
+	// TODO: auto
+)
+
+func (p paletteKind) String() string {
+	switch p {
+	case plan9:
+		return "plan9"
+	case webSafe:
+		return "websafe"
+	default:
+		return "unknown"
+	}
+}
+
+func (p *paletteKind) Set(s string) error {
+	switch strings.ToLower(s) {
+	case "plan9":
+		*p = plan9
+	case "websafe":
+		*p = webSafe
+	default:
+		return errors.New("must be plan9 or websafe")
+	}
+	return nil
+}
+
+func (p paletteKind) Palette() color.Palette {
+	switch p {
+	case plan9:
+		return palette.Plan9
+	case webSafe:
+		return palette.WebSafe
+	default:
+		panic(fmt.Sprintf("unknown palette: %d", p))
+	}
+}
+
 var (
 	delay     = flag.Uint("delay", 80, "delay per frame in 1/100 of a second")
 	loopCount = flag.Int("loop", 0, "animation loop count; 0 means forever, -1 means no looping (default 0)")
 	outPath   = flag.String("o", "", "`output` file")
+	pal       = plan9
 )
 
 func usage() {
@@ -33,6 +80,7 @@ func main() {
 	log.SetFlags(0)
 	log.SetPrefix("vergif: ")
 	flag.Usage = usage
+	flag.Var(&pal, "palette", "palette for truecolour quantisation; must be plan9 or websafe")
 	flag.Parse()
 
 	if flag.NArg() < 1 || *outPath == "" {
@@ -62,7 +110,7 @@ func main() {
 		if p, ok := img.(*image.Paletted); ok {
 			frame = p
 		} else {
-			frame = image.NewPaletted(img.Bounds(), palette.Plan9)
+			frame = image.NewPaletted(img.Bounds(), pal.Palette())
 			draw.FloydSteinberg.Draw(frame, frame.Rect, img, img.Bounds().Min)
 		}
 
