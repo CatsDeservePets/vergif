@@ -65,6 +65,7 @@ func (p paletteKind) Palette() color.Palette {
 
 var (
 	delay     = flag.Uint("delay", 80, "delay per frame in 1/100 of a second")
+	dither    = flag.Bool("dither", true, "use Floyd-Steinberg dithering when quantising truecolour images")
 	loopCount = flag.Int("loop", 0, "animation loop count; 0 means forever, -1 means no looping (default 0)")
 	outPath   = flag.String("o", "", "`output` file")
 	pal       = plan9
@@ -106,15 +107,7 @@ func main() {
 			log.Fatalf("%s: %v", path, err)
 		}
 
-		var frame *image.Paletted
-		if p, ok := img.(*image.Paletted); ok {
-			frame = p
-		} else {
-			frame = image.NewPaletted(img.Bounds(), pal.Palette())
-			draw.FloydSteinberg.Draw(frame, frame.Rect, img, img.Bounds().Min)
-		}
-
-		anim.Image = append(anim.Image, frame)
+		anim.Image = append(anim.Image, palettise(img, pal.Palette(), *dither))
 		anim.Disposal = append(anim.Disposal, gif.DisposalBackground)
 		anim.Delay = append(anim.Delay, int(*delay))
 	}
@@ -131,4 +124,19 @@ func main() {
 	if err := f.Close(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func palettise(img image.Image, pal color.Palette, dither bool) *image.Paletted {
+	if p, ok := img.(*image.Paletted); ok {
+		return p
+	}
+
+	var drawer draw.Drawer = draw.Src
+	if dither {
+		drawer = draw.FloydSteinberg
+	}
+
+	frame := image.NewPaletted(img.Bounds(), pal)
+	drawer.Draw(frame, frame.Rect, img, img.Bounds().Min)
+	return frame
 }

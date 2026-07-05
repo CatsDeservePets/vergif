@@ -14,6 +14,8 @@ go install github.com/CatsDeservePets/vergif@latest
 usage: vergif [flags] -o output image ...
   -delay uint
     	delay per frame in 1/100 of a second (default 80)
+  -dither
+    	use Floyd-Steinberg dithering when quantising truecolour images (default true)
   -loop int
     	animation loop count; 0 means forever, -1 means no looping (default 0)
   -o output
