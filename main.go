@@ -64,15 +64,15 @@ func (p paletteKind) Palette() color.Palette {
 }
 
 var (
-	delay     = flag.Uint("delay", 80, "delay per frame in 1/100 of a second")
-	dither    = flag.Bool("dither", true, "use Floyd-Steinberg dithering when quantising truecolour images")
-	loopCount = flag.Int("loop", 0, "animation loop count; 0 means forever, -1 means no looping (default 0)")
+	noDither  = flag.Bool("D", false, "disable Floyd-Steinberg dithering when quantising true-colour images")
+	delay     = flag.Uint("d", 80, "per-frame `delay` in 1/100 of a second")
+	loopCount = flag.Int("l", 0, "animation loop `count`; 0 means forever, -1 means no looping (default 0)")
 	outPath   = flag.String("o", "", "`output` file")
 	pal       = plan9
 )
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: vergif [flags] -o output image ...")
+	fmt.Fprintln(os.Stderr, "usage: vergif [-D] [-d delay] [-l count] [-p palette] -o output image ...")
 	flag.PrintDefaults()
 	os.Exit(2)
 }
@@ -81,7 +81,7 @@ func main() {
 	log.SetFlags(0)
 	log.SetPrefix("vergif: ")
 	flag.Usage = usage
-	flag.Var(&pal, "palette", "palette for truecolour quantisation; must be plan9 or websafe")
+	flag.Var(&pal, "p", "`palette` for true-colour quantisation; must be plan9 or websafe")
 	flag.Parse()
 
 	if flag.NArg() < 1 || *outPath == "" {
@@ -107,7 +107,7 @@ func main() {
 			log.Fatalf("%s: %v", path, err)
 		}
 
-		anim.Image = append(anim.Image, palettise(img, pal.Palette(), *dither))
+		anim.Image = append(anim.Image, palettise(img, pal.Palette(), !*noDither))
 		anim.Disposal = append(anim.Disposal, gif.DisposalBackground)
 		anim.Delay = append(anim.Delay, int(*delay))
 	}

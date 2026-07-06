@@ -11,17 +11,16 @@ go install github.com/CatsDeservePets/vergif@latest
 ## Usage
 
 ```
-usage: vergif [flags] -o output image ...
-  -delay uint
-    	delay per frame in 1/100 of a second (default 80)
-  -dither
-    	use Floyd-Steinberg dithering when quantising truecolour images (default true)
-  -loop int
+usage: vergif [-D] [-d delay] [-l count] [-p palette] -o output image ...
+  -D	disable Floyd-Steinberg dithering when quantising true-colour images
+  -d delay
+    	per-frame delay in 1/100 of a second (default 80)
+  -l count
     	animation loop count; 0 means forever, -1 means no looping (default 0)
   -o output
     	output file
-  -palette value
-    	palette for truecolour quantisation; must be plan9 or websafe (default plan9)
+  -p palette
+    	palette for true-colour quantisation; must be plan9 or websafe (default plan9)
 ```
 
 ## Example
